@@ -1,7 +1,3 @@
-/*
- * This 5x7 font is sourced from Adafruit-GFX-Library on github.
- */
-
 #ifndef FONT_H
 #define FONT_H
 

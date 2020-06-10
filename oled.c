@@ -1,16 +1,3 @@
-/*
- * Copyright (c) 2015, Vladimir Komendantskiy
- * MIT License
- *
- * OLED is a 128x64 dot matrix display driver and controller by Solomon
- * Systech. It is used by HelTec display modules.
- *
- * Reference:
- *
- * [1] OLED Advance Information. 128x64 Dot Matrix Segment/Common
- *     Driver with Controller. (Solomon Systech)
- */
-
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -20,7 +7,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-// real-time features
 #include <sys/mman.h>
 #include <sched.h>
 
@@ -45,13 +31,9 @@ int oled_open(struct display_info *disp, char *filename) {
 
 	if (ioctl(disp->file, I2C_SLAVE, disp->address) < 0)
 		return -2;
-
-	//	on_exit(cleanup, (void*)disp);
-
 	return 0;
 }
 
-// write commands and data to /dev/i2c*
 int oled_send(struct display_info *disp, struct sized_array *payload) {
 	if (write(disp->file, payload->array, payload->size) != payload->size)
 		return -1;
@@ -63,16 +45,6 @@ int oled_init(struct display_info *disp) {
 	struct sched_param sch;
 	int status = 0;
 	struct sized_array payload;
-
-	//	sch.sched_priority = 49;
-	//
-	//	status = sched_setscheduler(0, SCHED_FIFO, &sch);
-	//	if (status < 0)
-	//		return status;
-	//
-	//	status = mlockall(MCL_CURRENT | MCL_FUTURE);
-	//	if (status < 0)
-	//		return status;
 
 	payload.size = sizeof(display_config);
 	payload.array = display_config;
@@ -86,7 +58,6 @@ int oled_init(struct display_info *disp) {
 	return 0;
 }
 
-// send buffer to oled (show)
 int oled_send_buffer(struct display_info *disp) {
 	struct sized_array payload;
 	uint8_t packet[129];
@@ -101,13 +72,11 @@ int oled_send_buffer(struct display_info *disp) {
 	return 0;
 }
 
-// clear screen
 void oled_clear(struct display_info *disp) {
 	memset(disp->buffer, 0, sizeof(disp->buffer));
 	oled_send_buffer(disp);
 }
 
-// put string to one of the 8 pages (128x8 px) 
 void oled_putstr(struct display_info *disp, uint8_t line, uint8_t *str) {
 	uint8_t a;
 	int slen = strlen(str);
@@ -123,7 +92,6 @@ void oled_putstr(struct display_info *disp, uint8_t line, uint8_t *str) {
 	}
 }
 
-// put one pixel at xy, on=1|0 (turn on|off pixel)
 void oled_putpixel(struct display_info *disp, uint8_t x, uint8_t y, uint8_t on) {
 	uint8_t pageId = y / 8;
 	uint8_t bitOffset = y % 8;
@@ -135,7 +103,6 @@ void oled_putpixel(struct display_info *disp, uint8_t x, uint8_t y, uint8_t on) 
 	}
 }
 
-// put string to the buffer at xy
 void oled_putstrto(struct display_info *disp, uint8_t x, uint8_t y, uint8_t *str) {
 	uint8_t a;
 	int slen = strlen(str);
@@ -157,4 +124,3 @@ void oled_putstrto(struct display_info *disp, uint8_t x, uint8_t y, uint8_t *str
 		x+=fwidth+fspacing;
 	}
 }
-

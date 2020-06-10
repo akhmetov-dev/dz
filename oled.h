@@ -1,12 +1,3 @@
-/*
- * Copyright (c) 2015, Vladimir Komendantskiy
- * MIT License
- *
- * IOCTL interface to SSD1306 modules.
- *
- * Command sequences are sourced from an Arduino library by Sonal Pinto.
- */
-
 #ifndef OLED_H
 #define OLED_H
 
